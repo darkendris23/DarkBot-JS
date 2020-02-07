@@ -29,6 +29,15 @@ if (!message.content.startsWith(prefix) || message.author.bot) return;
 const args = message.content.slice(prefix.length).split(' ');
 const command = args.shift().toLowerCase();
 // the rest of your code
+// using the new `command` variable, this makes it easier to manage!
+// you can switch your other commands to this format as well
+else if (command === 'args-info') {
+	if (!args.length) {
+		return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+	}
+
+	message.channel.send(`Command name: ${command}\nArguments: ${args}`);
+}
 
 //------------------------------------------------//
 
