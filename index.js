@@ -2,7 +2,7 @@ require('dotenv').config();
 const Discord = require('discord.js')
 
 const TOKEN = process.env.TOKEN;
-const { Prefix } =  require ('./settings.json')
+const { prefix } =  require ('./settings.json')
 
 bot.commands = new Discord.Collection();
 const botCommands = require('./commands');
@@ -26,7 +26,7 @@ client.on('ready', () => {
 // client.on('message', message => {
 if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-const args = message.content.slice(prefix.length).split(' ');
+const args = message.content.slice(prefix.length).split(/ +/);
 const command = args.shift().toLowerCase();
 // the rest of your code
 // using the new `command` variable, this makes it easier to manage!
