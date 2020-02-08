@@ -5,8 +5,6 @@ const Discord = require('discord.js')
 const { prefix } =  require ('./settings.json');
 const botCommands = require('./commands');
 
-const token = process.env.DISCORD_TOKEN;
-
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
@@ -44,4 +42,4 @@ client.commands.get(command).execute(message, args);	} catch (error) {		console.
 
 //------------------------------------------------//
 
-client.login(token);
+client.login(process.env.DISCORD_TOKEN);
