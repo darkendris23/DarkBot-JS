@@ -1,37 +1,41 @@
 require("dotenv").config();
 const Discord = require("discord.js");
 const client = new Discord.Client();
+const fs = require("fs");
+require(__dirname + '/app/keepAlive.js')
+
 client.commands = new Discord.Collection();
-const botCommands = require("./commands");
+client.aliases = new Discord.Collection();
+client.events = new Discord.Collection();
 
 //Load Files
 const config = require("./settings.json");
 const prefix = config.prefix;
 const TOKEN = process.env.TOKEN;
 
-//Events
-Object.keys(botCommands).map(key => {
-  client.commands.set(botCommands[key].name, botCommands[key]);
-});
-
 //Commands
 
-//Executes
-client.on("ready", () => {
-  console.info(`Logged in as ${client.user.tag}!`);
+fs.readdir("./commands/", (err, files) => {
+
+    if (err) return console.log(err);
+    files.forEach(file => {
+        if (!file.endsWith(".js")) return;
+        let props = require(`./commands/${file}`);
+        console.log("Successfully loaded " + file)
+        let commandName = file.split(".")[0];
+        client.commands.set(commandName, props);
+    });
+});
+//Events "handler"
+fs.readdir('./events/', (err, files) => {
+    if (err) console.log(err);
+    files.forEach(file => {
+      let eventFunc = require(`./events/${file}`);
+        console.log("Successfully loaded " + file)
+        let eventName = file.split(".")[0];
+        client.on(eventName, (...args) => eventFunc.run(client, ...args));
+    });
 });
 
-client.on("message", msg => {
-  const args = msg.content.split(/ +/);
-  const command = args.shift().toLowerCase();
-  console.info(`Called command: ${command}`);
-  if (!client.commands.has(command)) return;
-  try {
-    client.commands.get(command).execute(msg, args);
-  } catch (error) {
-    console.error(error);
-    msg.reply("there was an error trying to execute that command!");
-  }
-});
-
-client.login(TOKEN);
+client.on("ready", () => console.log("Online!"));
+client.login(process.env.TOKEN);
